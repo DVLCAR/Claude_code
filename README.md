@@ -1,2 +1,2 @@
-# Claude_code
-Mon claude code
+# Claude_code_Investing
+Claude code qui analyse et comprend le trading
