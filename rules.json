@@ -1,0 +1,129 @@
+{
+  "_comment": "Rules pour le MCP claudeverstradingview de Kasper. Adapté au profil de Sandro : passion week-end, démo, SMC/ICT crypto, timeframes 1H/4H/Daily.",
+  "_version": "1.0",
+  "_last_updated": "2026-06-21",
+  "_workspace_owner": "Sandro",
+
+  "watchlist": [
+    {
+      "symbol": "BITSTAMP:BTCUSD",
+      "name": "Bitcoin",
+      "priority": "high"
+    },
+    {
+      "symbol": "BITSTAMP:ETHUSD",
+      "name": "Ethereum",
+      "priority": "high"
+    },
+    {
+      "symbol": "COINBASE:SOLUSD",
+      "name": "Solana",
+      "priority": "medium"
+    }
+  ],
+
+  "default_timeframe": "240",
+  "_timeframe_comment": "240 = 4H. Workflow entonnoir : Daily/4H pour la tendance et les POI, 1H (60) pour le trigger d'entrée, 15m (15) uniquement si besoin de précision.",
+
+  "approach": "SMC_ICT_Kasper",
+
+  "bias_criteria": {
+    "_comment": "Critères de biais que le morning_brief applique pour chaque symbole de la watchlist.",
+
+    "bullish_conditions": [
+      "Tendance HTF (Daily) haussière : BOS récent en cassure de précédent swing high",
+      "Prix au-dessus de l'EMA 20 sur 4H",
+      "Présence d'un Order Block bullish non mitigé en zone Discount (Fibonacci < 0.5)",
+      "Sweep d'EQL ou de PDL sans clôture sous le niveau (manipulation baissière échouée)",
+      "RSI 4H > 50 sans surachat critique"
+    ],
+
+    "bearish_conditions": [
+      "Tendance HTF (Daily) baissière : BOS récent en cassure de précédent swing low",
+      "Prix sous l'EMA 20 sur 4H",
+      "Présence d'un Order Block bearish non mitigé en zone Premium (Fibonacci > 0.5)",
+      "Sweep d'EQH ou de PDH sans clôture au-dessus (manipulation haussière échouée)",
+      "RSI 4H < 50 sans survente critique"
+    ],
+
+    "neutral_conditions": [
+      "Marché en range, structure HTF non claire",
+      "Conditions bullish et bearish s'annulent",
+      "Sortie récente de CHoCH, attente de confirmation"
+    ],
+
+    "minimum_conditions_to_take_bias": 3
+  },
+
+  "entry_checklist": {
+    "_comment": "Checklist obligatoire avant validation d'un trade. Tous les points doivent être verts. Source : CLAUDE.md du workspace trading.",
+    "required_checks": [
+      "1. Tendance HTF claire (BOS ou CHoCH récent identifié)",
+      "2. POI identifié et nommé (OB / FVG / BPR / Breaker)",
+      "3. Liquidité prise avant l'entrée (sweep EQH/EQL, Asian High/Low, ou PDH/PDL)",
+      "4. Cohérence Discount/Premium avec le sens du trade",
+      "5. Entrée dans l'OTE (0.618 - 0.786)",
+      "6. Killzone active (London 8h-11h FR ou NY 14h30-17h FR)",
+      "7. Pas de news macro majeure dans les 30 minutes",
+      "8. RR cible minimum 1:2"
+    ],
+    "if_any_check_fails": "REFUSER le trade. Nommer ce qui manque. Pas de validation partielle."
+  },
+
+  "risk_rules": {
+    "mode": "DEMO_ONLY",
+    "_mode_comment": "Pas d'exécution en réel tant que la démo n'a pas validé la méthode sur plusieurs week-ends complets.",
+
+    "max_risk_per_trade_pct": 1,
+    "_risk_comment": "1% du capital simulé maximum par trade. À recalibrer si passage en réel.",
+
+    "min_risk_reward_ratio": 2,
+    "_rr_comment": "Pas d'entrée en dessous d'un RR 1:2. Préférence pour 1:2 fixe selon Kasper.",
+
+    "max_concurrent_positions": 2,
+
+    "stop_session_after_consecutive_sl": 3,
+    "_stop_session_comment": "Après 3 SL d'affilée : fermeture écran obligatoire. Reprise au minimum le lendemain. Pas de revenge trading.",
+
+    "min_wait_after_sl_minutes": 60,
+    "_wait_comment": "Après un SL, attente d'au moins 1h avant de re-regarder le marché. Anti-revenge trading.",
+
+    "no_trade_zones": {
+      "around_macro_news_minutes": 30,
+      "_news_comment": "Pas de trade dans les 30 min avant/après FOMC, CPI, NFP, ou tout événement à fort impact.",
+
+      "first_minutes_of_session": 15,
+      "_session_open_comment": "Pas d'entrée dans les 15 premières minutes d'ouverture d'une killzone (volatilité erratique)."
+    },
+
+    "no_counter_trend_trades_unless": {
+      "min_rr_required": 3,
+      "_comment": "Trade contre la tendance HTF interdit, sauf RR > 1:3 et POI exceptionnel."
+    }
+  },
+
+  "operational_constraints": {
+    "_comment": "Contraintes liées au mode de vie de Sandro. Le trading ne doit jamais empiéter dessus.",
+
+    "primary_window": "weekend",
+    "_primary_comment": "Activité principale le week-end. Les sessions semaine sont possibles mais exceptionnelles.",
+
+    "blocked_windows": [
+      {
+        "name": "Créneaux commerciaux Ascensia",
+        "days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+        "hours": "08:00-12:00 FR",
+        "_comment": "Priorité absolue à Ascensia. Aucune session trading ne mange ce créneau."
+      }
+    ]
+  },
+
+  "tradingview_plan": "Basic",
+  "_plan_comment": "Plan Basic : 2 indicateurs max par chart. Prioriser Ribbon + indicateur SMC custom.",
+
+  "broker": {
+    "name": "Liquid Trade (app.liquid.trade)",
+    "status": "UNVERIFIED",
+    "_status_comment": "Due diligence initiale a remonté des alertes (voir HISTORY.md). Vérification approfondie obligatoire avant tout dépôt réel. Pour l'instant : analyse uniquement, zéro exécution."
+  }
+}
